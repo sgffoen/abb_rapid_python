@@ -44,9 +44,6 @@ class RAPID:
             load_data_cog (list, optional): Tool Load Center of Gravity. Defaults to [0, 0, 0].
             load_data_orient (list, optional): Tool Load Orientation. Defaults to [1, 0, 0, 0].
             load_data_inertia (list, optional): Tool Load Inertia. Defaults to [0, 0, 0].
-
-        Returns:
-            string: tooldata variable
         """
 
         tool = f"VAR tooldata {name}:=[{str(rob_hold).upper()},[{tool_frame_pos},{tool_frame_orient}],[{
@@ -59,9 +56,6 @@ class RAPID:
         Args:
             name (str, optional): Zone variable name. Defaults to "zone".
             val (int, optional): Zone value. Valid options are 0, 5, 10, 50, 100, 200. Defaults to 0 (fine).
-
-        Returns:
-            string: zonedata variable
         """
 
         zone = f"VAR zonedata {name}:=z{val.value};"
@@ -76,10 +70,8 @@ class RAPID:
             velocity_orient(int, optional): Orientation Velocity. Defaults to "50".
             velocity_leax(int, optional): Linear External Axis Velocity. Defaults to "0".
             velocity_reax(int, optional): Rotary External Axis Velocity. Defaults to "0".
-
-        Returns:
-            string: speeddata variable
         """
+        
         speed = f"VAR speeddata {name}:=[{velocity_tcp},{
             velocity_orient},{velocity_leax},{velocity_reax}];"
         self.program += speed + "\n"
@@ -106,9 +98,6 @@ class RAPID:
             uf_frame_orient (list, optional): User frame orientation [Q1, Q2, Q3, Q4]. Defaults to [1, 0, 0, 0].
             of_frame_pos (list, optional): Object frame position [X, Y, Z]. Defaults to [0, 0, 0].
             of_frame_orient (list, optional): Object frame orientation [Q1, Q2, Q3, Q4]. Defaults to [1, 0, 0, 0].
-
-        Returns:
-            None
         """
         self.name_wobj = name
         wobj = (
@@ -143,8 +132,6 @@ class RAPID:
             name_zone (str, optional): Name of zonedata variable. Defaults to "zone".
             name_tool (str, optional): Name of tooldata variable. Defaults to "tool".
 
-        Returns:
-            string: MoveL instruction
         """
         self.program += f"MoveL {self.set_robtarget(pos, orient, confdata, extax)}, {
             name_speed}, {name_zone}, {name_tool}"
@@ -163,9 +150,6 @@ class RAPID:
             name_speed (str, optional): Name of speeddata variable. Defaults to "speed".
             name_zone (str, optional): Name of zonedata variable. Defaults to "zone".
             name_tool (str, optional): Name of tooldata variable. Defaults to "tool".
-
-        Returns:
-            string: MoveJ instruction
         """
         self.program += f"MoveJ {self.set_robtarget(pos, orient, confdata, extax)}, {name_speed}, {name_zone}, {name_tool}"
         if self.name_wobj is not None:
@@ -181,9 +165,6 @@ class RAPID:
             name_speed (str, optional): Name of speeddata variable. Defaults to "speed".
             name_zone (str, optional): Name of zonedata variable. Defaults to "zone".
             name_tool (str, optional): Name of tooldata variable. Defaults to "tool".
-
-        Returns:
-            string: MoveAbsJ instruction
         """
 
         self.program += f"MoveAbsJ [{joint_positions}, {extax}], {name_speed}, {name_zone}, {name_tool}"
@@ -196,9 +177,6 @@ class RAPID:
 
         Args:
             time (int, optional): Time to wait (in seconds).
-
-        Returns:
-            string: Wait instruction
         """
         self.program += f"WaitTime {time};" + "\n"
 
@@ -208,9 +186,6 @@ class RAPID:
         Args:
             input (int): Digital input number.
             value (int): Value to wait for (0 or 1).
-
-        Returns:
-            string: WaitDI instruction
         """
         self.program += f"WaitDI {input}, {value};" + "\n"
 
@@ -220,9 +195,6 @@ class RAPID:
         Args:
             output (str): Name of digital output signal.
             value (int): Value to set (0 or 1).
-
-        Returns:
-            string: SetDO instruction
         """
         self.program += f"SetDO {name}, {value};" + "\n"
 
@@ -232,9 +204,6 @@ class RAPID:
         Args:
             output (int): Name of analog output signal.
             value (int): Value to set (0-100).
-
-        Returns:
-            string: SetAO instruction
         """
         self.program += f"SetAO {name}, {value};" + "\n"
 
@@ -243,9 +212,6 @@ class RAPID:
 
         Args:
             msg (str): Comment message.
-
-        Returns:
-            string: Comment
         """
         self.program += f"! {msg}" + "\n"
 
@@ -255,9 +221,6 @@ class RAPID:
         Args:
             msg (str): Message to write.
             val (str, optional): Value to write. Defaults to None.
-
-        Returns:
-            string: TPWrite instruction
         """
         if val is not None:
             if isinstance(val, bool):
