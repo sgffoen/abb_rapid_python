@@ -64,14 +64,11 @@ module.add_wait(time=1)
 
 # Example of how to use motion functions
 module.add_comment("Examples of how to use motion functions")
-module.add_MoveAbsJ(
-    joint_positions=[0, 0, 0, 0, 0, 0], name_speed="speed_slow", name_zone="zone")
+module.add_MoveAbsJ(joint_positions=[0, 0, 0, 0, 0, 0], name_speed="speed_slow", name_zone="zone")
 for point in test_points:
-    module.add_MoveL(list(point), [1, 0, 0, 0], name_speed="speed_fast",
-                     name_tool="tool", name_zone="zone_10")
+    module.add_MoveL(list(point), [1, 0, 0, 0], name_speed="speed_fast", name_tool="tool", name_zone="zone_10")
 for point in test_points:
-    module.add_MoveJ(list(point), [1, 0, 0, 0], name_speed="speed_fast",
-                     name_tool="gripper", name_zone="zone")
+    module.add_MoveJ(list(point), [1, 0, 0, 0], name_speed="speed_fast", name_tool="gripper", name_zone="zone")
 
 # Example of how to use print statements
 module.add_comment("Examples of how to use TP Write functions")
