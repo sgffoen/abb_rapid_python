@@ -4,6 +4,27 @@ Use this python class to generate simple RAPID modules for programming ABB robot
 ## Installation
 No installation is required. Just include `rapid.py` in your project and import the `RAPID` class.
 
+## Functions
+| Function Name                   | Description                                                  |
+|----------------------------------|--------------------------------------------------------------|
+| `set_tool(...)`                 | Creates a tooldata variable for the RAPID program.         |
+| `set_zone(...)`                 | Creates a zone variable for the RAPID program.             |
+| `set_speed(...)`                | Creates a speed data structure for the RAPID program.      |
+| `set_workobject(...)`           | Creates a workobject variable for the RAPID program.       |
+| `set_robtarget(...)`            | Creates a robot target variable for positioning.           |
+| `add_MoveL(...)`                | Creates a linear move instruction.                          |
+| `add_MoveJ(...)`                | Creates a joint move instruction.                           |
+| `add_MoveAbsJ(...)`             | Creates an absolute joint move instruction.                 |
+| `add_wait(...)`                 | Creates a wait instruction.                                 |
+| `add_wait_digital_input(...)`   | Creates a wait for digital input instruction.              |
+| `set_digital_output(...)`       | Creates a set digital output instruction.                   |
+| `set_analog_output(...)`        | Creates a set analog output instruction.                    |
+| `add_comment(...)`              | Creates a comment in the RAPID program.                    |
+| `add_print_statement(...)`      | Creates a TPWrite instruction for printing messages.       |
+| `begin_module(...)`             | Starts a new module in the RAPID program.                  |
+| `end_module()`                  | Ends the current module in the RAPID program.              |
+| `save_module(...)`              | Saves the generated RAPID program to a file.                |
+
 ## Usage Example
 
 ```python
