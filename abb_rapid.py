@@ -180,20 +180,20 @@ class RAPID:
         """
         self.program += f"WaitTime {time};" + "\n"
 
-    def add_wait_digital_input(self, input, value):
+    def add_wait_digital_input(self, name, value):
         """Creates a wait digital input instruction.
 
         Args:
-            input (int): Digital input number.
+            name (str): Name of digital input signal.
             value (int): Value to wait for (0 or 1).
         """
-        self.program += f"WaitDI {input}, {value};" + "\n"
+        self.program += f"WaitDI {name}, {value};" + "\n"
 
     def set_digital_output(self, name, value):
         """Creates a set digital output instruction.
 
         Args:
-            output (str): Name of digital output signal.
+            name (str): Name of digital output signal.
             value (int): Value to set (0 or 1).
         """
         self.program += f"SetDO {name}, {value};" + "\n"
@@ -202,7 +202,7 @@ class RAPID:
         """Creates a set analog output instruction.
 
         Args:
-            output (int): Name of analog output signal.
+            name (str): Name of analog output signal.
             value (int): Value to set (0-100).
         """
         self.program += f"SetAO {name}, {value};" + "\n"
