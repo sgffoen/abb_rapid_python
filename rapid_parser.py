@@ -16,20 +16,20 @@ class RobotTarget:
 
 class RapidParser:
     def __init__(self):
-        self.targets: List[RobotTarget] = []
-        self.speed_data: Dict[str, List[float]] = {}
-        self.zone_data: Dict[str, List[float]] = {}
-        self.tool_data: Dict[str, Dict[str, Any]] = {}
-        self.wobj_data: Dict[str, Dict[str, Any]] = {}
+        self.targets = []
+        self.speed_data = {}
+        self.zone_data = {}
+        self.tool_data = {}
+        self.wobj_data = {}
 
-    def parse_speed_data(self, line: str) -> None:
+    def parse_speed_data(self, line):
         """Parse speeddata declarations"""
         match = re.match(r'TASK PERS speeddata (\w+):=\[([\d.,\s]+)\];', line)
         if match:
             name, values = match.groups()
             self.speed_data[name] = [float(v) for v in values.split(',')]
 
-    def parse_zone_data(self, line: str) -> None:
+    def parse_zone_data(self, line):
         """Parse zonedata declarations"""
         match = re.match(r'TASK PERS zonedata (\w+):=\[([\w.,\s]+)\];', line)
         if match:
@@ -37,7 +37,7 @@ class RapidParser:
             self.zone_data[name] = [float(v) if v.replace('.', '').isdigit() else v 
                                   for v in values.split(',')]
 
-    def parse_tool_data(self, line: str) -> None:
+    def parse_tool_data(self, line):
         """Parse tooldata declarations"""
         match = re.match(r'PERS tooldata (\w+):=\[([\w.,\s\[\]]+)\];', line)
         if match:
@@ -45,7 +45,7 @@ class RapidParser:
             # This is a simplified parsing - you might want to enhance this
             self.tool_data[name] = {'raw': values}
 
-    def parse_wobj_data(self, line: str) -> None:
+    def parse_wobj_data(self, line):
         """Parse wobjdata declarations"""
         match = re.match(r'TASK PERS wobjdata (\w+):=\[([\w.,\s\[\]""]+)\];', line)
         if match:
@@ -53,42 +53,37 @@ class RapidParser:
             # This is a simplified parsing - you might want to enhance this
             self.wobj_data[name] = {'raw': values}
 
-    def parse_move_command(self, line: str) -> Optional[RobotTarget]:
-        """Parse MoveJ, MoveL, and MoveAbsJ commands"""
-        move_pattern = r'(MoveJ|MoveL|MoveAbsJ)\s+\[\[([\d.,\s-]+)\],\[([\d.,\s-]+)\],(\w+),\[([\d.,\s-]+)\]\],(\w+),(\w+),(\w+)(?:\s*\\WObj:=(\w+))?'
-        match = re.match(move_pattern, line)
+    def parse_move_command(self, line):
+        """Parse move commands to extract position and orientation"""
+        # Pattern to match position and orientation in move commands
+        pattern = r'(MoveJ|MoveL|MoveAbsJ)\s+\[\[([\d.,\s-]+)\],\[([\d.,\s-]+)\]'
         
-        if not match:
-            return None
+        match = re.search(pattern, line)
+        if match:
+            try:
+                move_type = match.group(1)
+                pos_str = match.group(2)
+                orient_str = match.group(3)
+                
+                # Parse position
+                position = [float(x.strip()) for x in pos_str.split(',')]
+                
+                # Parse orientation (quaternion)
+                orientation = [float(q.strip()) for q in orient_str.split(',')]
+                
+                return {
+                    'move_type': move_type,
+                    'position': position,
+                    'orientation': orientation
+                }
+            except ValueError as e:
+                print(f"Error parsing values in line: {line.strip()}")
+                print(f"Error details: {str(e)}")
+                return None
+        return None
 
-        move_type, pos_str, orient_str, conf_str, ext_axes_str, speed, zone, tool, wobj = match.groups()
-        
-        # Parse position
-        position = [float(x) for x in pos_str.split(',')]
-        
-        # Parse orientation (quaternion)
-        orientation = [float(q) for q in orient_str.split(',')]
-        
-        # Parse configuration
-        conf = [int(c) for c in conf_str.split(',')]
-        
-        # Parse external axes
-        ext_axes = [float(e) if e != '9E9' else float('inf') for e in ext_axes_str.split(',')]
-        
-        return RobotTarget(
-            position=position,
-            orientation=orientation,
-            conf=conf,
-            ext_axes=ext_axes,
-            speed=speed,
-            zone=zone,
-            tool=tool,
-            wobj=wobj,
-            move_type=move_type
-        )
-
-    def parse_file(self, file_path: str) -> None:
-        """Parse a RAPID file and extract all targets and data"""
+    def parse_file(self, file_path):
+        """Parse a RAPID file and extract positions"""
         with open(file_path, 'r') as f:
             for line in f:
                 line = line.strip()
@@ -106,44 +101,56 @@ class RapidParser:
                 if target:
                     self.targets.append(target)
 
-    def get_targets(self) -> List[RobotTarget]:
+    def get_targets(self):
         """Return all parsed targets"""
         return self.targets
 
-    def get_speed_data(self) -> Dict[str, List[float]]:
+    def get_speed_data(self):
         """Return all parsed speed data"""
         return self.speed_data
 
-    def get_zone_data(self) -> Dict[str, List[float]]:
+    def get_zone_data(self):
         """Return all parsed zone data"""
         return self.zone_data
 
-    def get_tool_data(self) -> Dict[str, Dict[str, Any]]:
+    def get_tool_data(self):
         """Return all parsed tool data"""
         return self.tool_data
 
-    def get_wobj_data(self) -> Dict[str, Dict[str, Any]]:
+    def get_wobj_data(self):
         """Return all parsed work object data"""
         return self.wobj_data
 
 def main():
     # Example usage
     parser = RapidParser()
-    parser.parse_file('data/test_T_ROB1.mod')
+    file_path = 'data/test_T_ROB1.mod'
+    
+    # Verify file exists
+    try:
+        with open(file_path, 'r') as f:
+            print(f"Successfully opened file: {file_path}")
+            # Print first few lines to verify content
+            print("\nFirst few lines of the file:")
+            for i, line in enumerate(f):
+                if i < 5:  # Print first 5 lines
+                    print(f"Line {i+1}: {line.strip()}")
+                else:
+                    break
+    except FileNotFoundError:
+        print(f"Error: File not found at {file_path}")
+        return
+    
+    # Parse the file
+    parser.parse_file(file_path)
     
     # Print all targets
-    print("Robot Targets:")
+    print("\nRobot Positions and Orientations:")
     for i, target in enumerate(parser.get_targets(), 1):
         print(f"\nTarget {i}:")
-        print(f"  Position: {target.position}")
-        print(f"  Orientation: {target.orientation}")
-        print(f"  Configuration: {target.conf}")
-        print(f"  External Axes: {target.ext_axes}")
-        print(f"  Speed: {target.speed}")
-        print(f"  Zone: {target.zone}")
-        print(f"  Tool: {target.tool}")
-        print(f"  Work Object: {target.wobj}")
-        print(f"  Move Type: {target.move_type}")
+        print(f"  Move Type: {target['move_type']}")
+        print(f"  Position: {target['position']}")
+        print(f"  Orientation: {target['orientation']}")
 
 if __name__ == "__main__":
     main() 
