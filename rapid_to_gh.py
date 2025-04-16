@@ -4,6 +4,7 @@ import math
 from rapid_parser import RapidParser
 from pathlib import Path
 
+
 def quaternion_to_plane(position, quaternion):
     """Convert position and quaternion to Rhino plane"""
     # Create a point from position
@@ -61,6 +62,10 @@ def create_gh_targets(rapid_targets):
         gh_targets.append(gh_target)
     
     return gh_targets
+
+def set_tool(target, tool):
+    """Set the tool for the robot target"""
+    target.set_Tool(tool)
 
 def create_gh_targets_from_rapid_file(file_path):
     # Parse RAPID file
