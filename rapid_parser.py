@@ -124,7 +124,7 @@ class RapidParser:
 def main():
     # Example usage
     parser = RapidParser()
-    file_path = 'data/test_T_ROB1.mod'
+    file_path = 'data/test_movel_T_ROB1.mod'
     
     # Verify file exists
     try:
